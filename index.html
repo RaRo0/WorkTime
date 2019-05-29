@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <title></title>
+
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+      <script src="http://dygraphs.com/2.1.0/dygraph.min.js" ></script>
+      <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+      <script src="app.js"></script>
+
+     <link rel="stylesheet" href="app.css">
+     <link rel="stylesheet" href="http://dygraphs.com/2.1.0/dygraph.css">
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <meta content="">
+  </head>
+  <body>
+  <input type="file" id="input" multiple onchange="handleFiles(0)"></input>
+  <br>
+
+    <div id="table" class="main">
+        <table id="mytable" class="cell-center"></table>
+    </div>
+  <div id="graph"class="main" style="width:500px; height:300px;"></div>
+  <div id="data"class="main">
+      <span id="total"></span>
+      <span id="max"></span>
+      <span id="min"></span>
+  </div>
+    <div id="control"class="main">
+      <button id="month">Diesen Monat</button>
+      <button id="lastmonth">Letzten Monat</button>
+       <button id="all">Alle</button>
+  </div>
+  </body>
+</html>
