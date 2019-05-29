@@ -4,16 +4,19 @@ var reloader;
 var mainparam;
 $(document).ready( function () {
 $("#month").click(function () {
-    setDataToMonth(0)
+    setData(0)
 })
 $("#lastmonth").click(function () {
-    setDataToMonth(-1)
+    setData(-1)
+})
+$("#week").click(function () {
+    setData("week")
 })
 $("#all").click(function () {
-    setDataToMonth(null)
+    setData(null)
 })
 });
-function setDataToMonth(data) {
+function setData(data) {
     if(!isLoad)
     {
         return
@@ -66,6 +69,13 @@ function formartDate(d,t=false) {
     }
     return(d.getHours()-1).toString().padStart(2,"0")+":"+ d.getMinutes().toString().padStart(2,"0")+":"+ d.getSeconds().toString().padStart(2,"0")
 }
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    return [d.getUTCFullYear(), weekNo];
+}
 function handleData(data) {
   isLoad=true;
   var arr=[];
@@ -73,40 +83,49 @@ function handleData(data) {
   var min;
   var max;
   var total=0;
+  var vaild=true;
   for(t in data["times"])
   {
     var tmpData=data["times"][t];
     var d = new Date(Date.parse(tmpData["day"]))
+    vaild=true;
     if(mainparam!=null)
     {
-        if(d.getMonth()!=(new Date()).getMonth()+mainparam)
+        if(mainparam =="week")
         {
-            break;
+            if(getWeekNumber(d)[1]!=getWeekNumber(new  Date())[1])
+            {
+                vaild=false;
+            }
+        }
+        else if(d.getMonth()!=(new Date()).getMonth()+mainparam)
+        {
+            vaild=false;
         }
     }
-    var tmp_d=d;
-    var date =(d).toLocaleDateString()
-    d = new Date(Date.parse(tmpData["start"]))
-    var start = formartDate(d)
-    d = new Date(Date.parse(tmpData["end"]))
-    var end = formartDate(d)
-    d= d- new Date(Date.parse(tmpData["start"]))
-    var tmp_time =Math.round((d)/(1000*60));
-    d= new Date(d)
-    var time= formartDate(d)
-    if(min>tmp_time||min==undefined)
-    {
-      min=tmp_time
+    if(vaild) {
+        var tmp_d = d;
+        var date = (d).toLocaleDateString()
+        d = new Date(Date.parse(tmpData["start"]))
+        var start = formartDate(d)
+        d = new Date(Date.parse(tmpData["end"]))
+        var end = formartDate(d)
+        d = d - new Date(Date.parse(tmpData["start"]))
+        var tmp_time = Math.round((d) / (1000 * 60));
+        d = new Date(d)
+        var time = formartDate(d)
+        if (min > tmp_time || min == undefined) {
+            min = tmp_time
+        }
+        if (max < tmp_time || max == undefined) {
+            max = tmp_time
+        }
+        total += tmp_time;
+        log(min)
+        log(max)
+        arr.push([tmp_d, tmp_time])
+        timeData.push([date, start, end, time])
     }
-    if(max<tmp_time||max==undefined)
-    {
-      max=tmp_time
-    }
-    total+=tmp_time;
-    log(min)
-    log(max)
-    arr.push([tmp_d,tmp_time])
-    timeData.push([date,start,end,time])
   }
   $("#min")[0].innerText="Min : "+formartDate(new Date(min*(1000*60)));
   $("#max")[0].innerText="Max : "+formartDate(new Date(max*(1000*60)));
