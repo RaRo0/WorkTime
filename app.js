@@ -1,71 +1,41 @@
 var table;
 var isLoad = false
 var reloader;
-var mainparam;
 var g;
+var rawdata;
+var mainparam=0;
 $(document).ready(function () {
     $("#month").click(function () {
-        setData(0)
+        mainparam=0;
+        handleData(rawdata)
     })
     $("#lastmonth").click(function () {
-        setData(-1)
+         mainparam=-1;
+        handleData(rawdata)
     })
     $("#week").click(function () {
-        setData("week")
+         mainparam="week";
+        handleData(rawdata)
     })
     $("#all").click(function () {
-        setData(null)
+         mainparam=null;
+        handleData(rawdata)
     })
+    reloader = window.setInterval(function () {loadData()}, 20 * 1000);
+    loadData();
 });
+function loadData() {
 
-function setData(data) {
-    if (!isLoad) {
-        return
-    }
-    handleFiles(data)
-
+    $.get("data.json", function(data){
+    isLoad=true;
+    rawdata=data;
+    handleData(data,0);
+    });
 }
-
 function log(data) {
     console.log(data);
 }
 
-function handleFiles(params) {
-    if (reloader != undefined) {
-        clearInterval(reloader);
-    }
-    mainparam = params;
-    reloader = window.setInterval(function () {
-            readFile()
-        }
-        , 20 * 1000);
-    readFile()
-}
-
-function readFile() {
-    var file = document.getElementById('input').files[0];
-    if (file) {
-
-        getAsText(file);
-    }
-}
-
-function getAsText(readFile) {
-
-    var reader = new FileReader();
-
-    // Read file into memory as UTF-16
-    reader.readAsText(readFile, "UTF-8");
-
-    reader.onload = loaded;
-}
-
-function loaded(evt) {
-    // Obtain the read file data
-    var fileString = evt.target.result;
-    var data = JSON.parse(fileString);
-    handleData(data)
-}
 
 function formartTime(d, t = 0) {
     switch (t) {
@@ -177,6 +147,7 @@ function drawTable(timeData) {
                 {title: "End"},
                 {title: "Time"}
             ],
+            "ordering": false,
             "searching": false,
             "columnDefs": [
                 {"className": "dt-center", "targets": "_all"}
