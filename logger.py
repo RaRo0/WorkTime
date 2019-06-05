@@ -3,7 +3,7 @@ import datetime
 import subprocess
 find = False
 today = str(datetime.date.today())
-with open('data.json') as json_file:
+with open('app/data.json') as json_file:
     data = json.load(json_file)
 for t in data['times']:
 	if(t["day"]==today):
@@ -14,5 +14,5 @@ for t in data['times']:
 if( not find):
 	newdata=[{"start": str(datetime.datetime.now()), "end": str(datetime.datetime.now()), "day":str(today)}]
 	data["times"]=data["times"]+newdata
-with open('data.json', 'w') as outfile:
+with open('app/data.json', 'w') as outfile:
 	json.dump(data, outfile)
