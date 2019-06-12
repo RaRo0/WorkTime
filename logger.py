@@ -8,7 +8,7 @@ with open('app/data.json') as json_file:
 for t in data['times']:
 	if(t["day"]==today):
 		t["end"]=str(datetime.datetime.now())
-		print(t)
+		#print(t)
 		find=True
 
 if( not find):
